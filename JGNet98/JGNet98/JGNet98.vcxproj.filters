@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="IOCPCore.h">
+      <Filter>Core\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Connection.h">
+      <Filter>Core\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="TCPListener.h">
+      <Filter>Core\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvBuffer.h">
+      <Filter>Core\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreMacro.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CorePch.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Lock.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadManager.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="DBConnection.h">
+      <Filter>Core\DB</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadSafeQueue.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="JGOverlapped.h">
+      <Filter>Core\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="JGNet98App.h">
+      <Filter>Core\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectionContext.h">
+      <Filter>Core\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryReader.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryWriter.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Creature.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Sector.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="MapManager.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="packet.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DummyClientApp.h">
+      <Filter>Dummy</Filter>
+    </ClInclude>
+    <ClInclude Include="TCPConnector.h">
+      <Filter>Core\Network</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="IOCPCore.cpp">
+      <Filter>Core\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Connection.cpp">
+      <Filter>Core\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="TCPListener.cpp">
+      <Filter>Core\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="RecvBuffer.cpp">
+      <Filter>Core\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="CorePch.cpp">
+      <Filter>Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Lock.cpp">
+      <Filter>Core\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadManager.cpp">
+      <Filter>Core\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="DBConnection.cpp">
+      <Filter>Core\DB</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadSafeQueue.cpp">
+      <Filter>Core\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="JGOverlapped.cpp">
+      <Filter>Core\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="JGNet98App.cpp">
+      <Filter>Core\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectionContext.cpp">
+      <Filter>Core\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryReader.cpp">
+      <Filter>Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryWriter.cpp">
+      <Filter>Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Creature.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Sector.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="MapManager.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="DummyClientApp.cpp">
+      <Filter>Dummy</Filter>
+    </ClCompile>
+    <ClCompile Include="TCPConnector.cpp">
+      <Filter>Core\Network</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{a6e9c090-d1ff-4aab-932e-dc09846cfff5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Network">
+      <UniqueIdentifier>{f8dcd9e3-25ba-4eea-8740-1cd917c7ccf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Utils">
+      <UniqueIdentifier>{cdbc15a5-e56d-4f05-be70-8ab486f02c11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Thread">
+      <UniqueIdentifier>{397f5033-c40b-488c-b028-4e8a0334b046}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\DB">
+      <UniqueIdentifier>{f72f41d3-b553-4a9f-9eab-9f1645eacf78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base">
+      <UniqueIdentifier>{63823151-dbfd-4147-a16e-7a33dcb42849}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dummy">
+      <UniqueIdentifier>{8976ec9b-bdb8-49b0-9b61-ddf14469eb0d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
