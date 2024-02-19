@@ -9,5 +9,5 @@
 
 // RecvBuffer ªÁ¿Ã¡Ó
 #define RECV_BUFFER_CHUNK 4096
-#define RECV_BUFFER_COUNT 5
+#define RECV_BUFFER_COUNT 7
 #define RECV_BUFFER_LEN 4096 * RECV_BUFFER_COUNT

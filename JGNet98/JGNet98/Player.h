@@ -4,7 +4,7 @@ class Connection;
 
 class Player : public Creature
 {
-private:
+protected:
 	int32				_playerSQ;
 	Dir					_mouseDir;
 	Vector3				_target;
