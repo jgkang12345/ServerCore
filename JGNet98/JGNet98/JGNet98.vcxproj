@@ -152,6 +152,7 @@
     <ClInclude Include="JGNet98App.h" />
     <ClInclude Include="JGOverlapped.h" />
     <ClInclude Include="Lock.h" />
+    <ClInclude Include="LockBasedQueue.h" />
     <ClInclude Include="MapManager.h" />
     <ClInclude Include="packet.h" />
     <ClInclude Include="pch.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="JGNet98App.cpp" />
     <ClCompile Include="JGOverlapped.cpp" />
     <ClCompile Include="Lock.cpp" />
+    <ClCompile Include="LockBasedQueue.cpp" />
     <ClCompile Include="MapManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -20,14 +20,16 @@ Connection::~Connection()
 	closesocket(_socket);
 }
 
-void Connection::Send(byte* buffer, int32 bufferSize)
+void Connection::SendEx(byte* buffer, int32 bufferSize)
 {
-	WSABUF wsaBuffer; DWORD sendBytes; DWORD flag = 0;
+	WSABUF wsaBuffer; 
+	DWORD sendBytes; 
+	DWORD flag = 0;
 
 	wsaBuffer.buf = reinterpret_cast<CHAR*>(buffer);
 	wsaBuffer.len = bufferSize;
-
-	if (WSASend(_socket, &wsaBuffer, 1, &sendBytes, flag, NULL, NULL) == SOCKET_ERROR)
+	
+	if (WSASend(_socket, &wsaBuffer, 1, &sendBytes, flag, &_sendOverlapped, NULL) == SOCKET_ERROR)
 	{
 		int32 errorCode = WSAGetLastError();
 
@@ -46,6 +48,21 @@ void Connection::Send(byte* buffer, int32 bufferSize)
 			wprintf_s(L"errorCode %d", errorCode);
 			DEBUG_ERROR(1 == 2, "");
 		}
+	}
+}
+
+void Connection::Send(byte* buffer, int32 bufferSize)
+{
+	byte* newBuffer = new byte[bufferSize];
+	::memcpy(newBuffer, buffer, bufferSize);
+	if (_sendQueue.Empty())
+	{
+		_sendQueue.Push(newBuffer);
+		SendEx(buffer, bufferSize);
+	}
+	else
+	{
+		_sendQueue.Push(newBuffer);
 	}
 }
 
