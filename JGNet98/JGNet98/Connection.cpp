@@ -19,16 +19,28 @@ Connection::~Connection()
 
 	closesocket(_socket);
 }
-
-void Connection::SendEx(byte* buffer, int32 bufferSize)
+// 진짜 Send
+void Connection::SendEx(byte* newBuffer)
 {
+	if (newBuffer != nullptr)
+	{
+		_sendOverlapped.AddPush();
+		_sendQueue.push(newBuffer);
+	}
+	else
+	{
+		_sendOverlapped.ReAddPush();
+	}
+
 	WSABUF wsaBuffer; 
 	DWORD sendBytes; 
 	DWORD flag = 0;
 
+	byte* buffer = _sendQueue.front();
+	int32 bufferSize = reinterpret_cast<PacketHeader*>(buffer)->_pktSize;
+
 	wsaBuffer.buf = reinterpret_cast<CHAR*>(buffer);
 	wsaBuffer.len = bufferSize;
-	
 	if (WSASend(_socket, &wsaBuffer, 1, &sendBytes, flag, &_sendOverlapped, NULL) == SOCKET_ERROR)
 	{
 		int32 errorCode = WSAGetLastError();
@@ -36,17 +48,16 @@ void Connection::SendEx(byte* buffer, int32 bufferSize)
 		if (errorCode == WSAEWOULDBLOCK)
 		{
 			wprintf_s(L"WSA Send Block Error\n");
-			closesocket(_socket);
 			// TODO Connector 삭제
 		}
-		else if (errorCode == WSAECONNRESET)
+		else if (errorCode == WSAECONNRESET || errorCode == WSAECONNABORTED)
 		{
-
+			wprintf_s(L"Client DisConnect %d\n", errorCode);
 		}
 		else
 		{
-			wprintf_s(L"errorCode %d", errorCode);
-			DEBUG_ERROR(1 == 2, "");
+			wprintf_s(L"ReSend ErrorCode %d\n", errorCode);
+			SendEx(newBuffer);
 		}
 	}
 }
@@ -55,14 +66,9 @@ void Connection::Send(byte* buffer, int32 bufferSize)
 {
 	byte* newBuffer = new byte[bufferSize];
 	::memcpy(newBuffer, buffer, bufferSize);
-	if (_sendQueue.Empty())
 	{
-		_sendQueue.Push(newBuffer);
-		SendEx(buffer, bufferSize);
-	}
-	else
-	{
-		_sendQueue.Push(newBuffer);
+		LockGuard lockGuard(&_cs);
+		SendEx(newBuffer);
 	}
 }
 
@@ -106,9 +112,71 @@ void Connection::OnRecv(Connection* connection, byte* dataPtr, int32 dataLen)
 
 void Connection::OnDisconnect()
 {
-	
+
 }
 
 void Connection::OnConnect()
 {
+}
+
+void Connection::SendProc(bool ret, int32 numOfBytes)
+{
+	LockGuard lockGuard(&_cs);
+	if (!ret) 
+	{
+		{
+			LockGuard lockGuard(&_cs);
+			int32 errorCode = WSAGetLastError();
+
+			if (errorCode == WSAEWOULDBLOCK)
+			{
+				wprintf_s(L"WSA Send Block Error\n");
+			}
+			else if (errorCode == WSAECONNRESET || errorCode == WSAECONNABORTED)
+			{
+				wprintf_s(L"Client DisConnect %d\n", errorCode);
+				while (_sendQueue.empty())
+				{
+					byte* packet = _sendQueue.front();
+					delete[] packet;
+					_sendQueue.pop();
+				}
+			}
+			else
+			{
+				wprintf_s(L"ReSend ErrorCode %d\n", errorCode);
+				if (!_sendQueue.empty())
+				{
+					SendEx(nullptr);
+				}
+			}
+		}
+	}
+	else
+	{
+		if (_sendQueue.empty())
+			return;
+
+		_sendOverlapped.ReducePop();
+		delete[] _sendQueue.front();
+		_sendQueue.pop();
+
+		if (!_sendQueue.empty()) 
+		{
+			SendEx(nullptr); 
+		}
+	}
+}
+
+void Connection::RecvProc(bool ret, int32 numOfBytes)
+{
+	if (ret == false || numOfBytes == 0)
+	{
+		OnDisconnect();
+		delete this;
+	}
+	else
+	{
+		Recv(numOfBytes);
+	}
 }

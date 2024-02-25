@@ -36,71 +36,11 @@ void IOCPCore::Dispatch()
     switch (expendedOverlapped->iocpType)
     {
     case JGOverlapped::IOCPType::Send:
-        SendProc(con,ret,numOfBytes);
+        con->SendProc(ret, numOfBytes);
         break;
 
     case JGOverlapped::IOCPType::Recv:
-        RecvPorc(con, ret, numOfBytes);
+        con->RecvProc(ret, numOfBytes);
         break;
     }
-}
-
-void IOCPCore::RecvPorc(Connection* con, bool ret, int32 numOfBytes)
-{
-    if (ret == false || numOfBytes == 0)
-    {
-        con->OnDisconnect();
-        delete con;
-    }
-    else
-    {
-        con->Recv(numOfBytes);
-    }
-}
-
-void IOCPCore::SendProc(Connection* con, bool ret, int32 numOfBytes)
-{
-    LockBasedQueue<byte*>& sendQ = con->GetSendQueue();
-    if (ret == FALSE)
-    {
-        // 치명적인 에러 접속을 끊어야 할 경우
-        int errorCode = WSAGetLastError();
-        if (errorCode == WSAECONNRESET
-            || errorCode == WSAECONNABORTED
-            || errorCode == WSAENOBUFS
-            || errorCode == WSAESHUTDOWN
-            || errorCode == WSAENETDOWN
-            || errorCode == WSAENETRESET
-            || errorCode == WSAEHOSTUNREACH
-            || errorCode == WSAEMSGSIZE
-            || errorCode == WSAETIMEDOUT
-            )
-        {
-            while (sendQ.Empty() == false)
-            {
-                sendQ.Pop();
-            }
-            con->OnDisconnect();
-            delete con;
-            wprintf_s(L"Send Socket Error\n");
-        }
-        else
-        {
-            // 단순 에러, 다시 재전송
-            byte* packet = sendQ.Front();
-            const int32 packetSize = reinterpret_cast<PacketHeader*>(packet)->_pktSize;
-            con->SendEx(packet, packetSize);
-        }
-    }
-    else
-    {
-        sendQ.Pop();
-        if (sendQ.Empty() == false)
-        {
-            byte* sendPacket = sendQ.Front();
-            const int32 packetSize = reinterpret_cast<PacketHeader*>(sendPacket)->_pktSize;
-            con->SendEx(sendPacket, packetSize);
-        }
-    }
-
 }

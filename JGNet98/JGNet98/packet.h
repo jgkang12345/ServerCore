@@ -21,7 +21,6 @@ public:
 	}
 };
 
-
 /*
 	HandlePacket_C2S_PLAYERINIT
 */

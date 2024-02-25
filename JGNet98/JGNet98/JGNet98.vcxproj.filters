@@ -73,7 +73,9 @@
     <ClInclude Include="TCPConnector.h">
       <Filter>Core\Network</Filter>
     </ClInclude>
-    <ClInclude Include="LockBasedQueue.h" />
+    <ClInclude Include="LockBasedQueue.h">
+      <Filter>Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IOCPCore.cpp">
@@ -139,7 +141,9 @@
     <ClCompile Include="TCPConnector.cpp">
       <Filter>Core\Network</Filter>
     </ClCompile>
-    <ClCompile Include="LockBasedQueue.cpp" />
+    <ClCompile Include="LockBasedQueue.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
