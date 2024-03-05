@@ -159,10 +159,12 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="RecvBuffer.h" />
     <ClInclude Include="Sector.h" />
+    <ClInclude Include="SendBuffer.h" />
     <ClInclude Include="TCPConnector.h" />
     <ClInclude Include="TCPListener.h" />
     <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="ThreadSafeQueue.h" />
+    <ClInclude Include="ThreadSafeSharedPtr.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
@@ -189,10 +191,12 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RecvBuffer.cpp" />
     <ClCompile Include="Sector.cpp" />
+    <ClCompile Include="SendBuffer.cpp" />
     <ClCompile Include="TCPConnector.cpp" />
     <ClCompile Include="TCPListener.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
     <ClCompile Include="ThreadSafeQueue.cpp" />
+    <ClCompile Include="ThreadSafeSharedPtr.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -24,21 +24,17 @@ void Sector::Reset(Connection* connection)
 	_connections.erase(connection);
 }
 
-void Sector::BroadCast(Connection* connection, BYTE* sendBuffer, int32 sendSize)
+void Sector::BroadCast(Connection* connection, ThreadSafeSharedPtr sendBuffer)
 {
 	LockGuard lock(&_spinLock);
 
 	for (auto c : _connections)
-		c->Send(sendBuffer, sendSize);
+		c->Send(sendBuffer);
 }
 
 void Sector::SendPlayerList(Connection* connection)
 {
 	Player* player = connection->GetPlayer();
-
-	BYTE sendBuffer[255];
-	BinaryWriter bw(sendBuffer);
-	PacketHeader* pktHeader = bw.WriteReserve<PacketHeader>();
 
 	int32 sessionId = connection->GetConnectionId();
 	int8 playerState = (int8)player->GetState();
@@ -55,29 +51,28 @@ void Sector::SendPlayerList(Connection* connection)
 	int8 userNameSize = wcslen(userName) * sizeof(WCHAR);
 	int8 playerType = player->GetPlayerType();
 
-	PLAYERNEW_PACKET playerNewPacket;
-	playerNewPacket.sessionId = sessionId;
-	playerNewPacket.playerState = playerState;
-	playerNewPacket.playerDir = playerDir;
-	playerNewPacket.playerMouseDir = playerMouseDir;
-	playerNewPacket.playerPos = playerPos;
-	playerNewPacket.playerQuaternion = playerQuaternion;
-	playerNewPacket.playerTarget = playerTarget;
-	playerNewPacket.playerMoveType = playerMoveType;
-	playerNewPacket.playerHp = playerHp;
-	playerNewPacket.playerMp = playerMp;
-	playerNewPacket.level = level;
-	wcscpy_s(playerNewPacket.playerName, userName);
-	playerNewPacket.playerType = playerType;
-	
-	LockGuard lock(&_spinLock);
+	PLAYERNEW_PACKET* playerNewPacket = new PLAYERNEW_PACKET;
+	playerNewPacket->sessionId = sessionId;
+	playerNewPacket->playerState = playerState;
+	playerNewPacket->playerDir = playerDir;
+	playerNewPacket->playerMouseDir = playerMouseDir;
+	playerNewPacket->playerPos = playerPos;
+	playerNewPacket->playerQuaternion = playerQuaternion;
+	playerNewPacket->playerTarget = playerTarget;
+	playerNewPacket->playerMoveType = playerMoveType;
+	playerNewPacket->playerHp = playerHp;
+	playerNewPacket->playerMp = playerMp;
+	playerNewPacket->level = level;
+	wcscpy_s(playerNewPacket->playerName, userName);
+	playerNewPacket->playerType = playerType;
 
+	ThreadSafeSharedPtr sendBuffer = ThreadSafeSharedPtr(playerNewPacket,false);
+	LockGuard lock(&_spinLock);
 	for (auto s : _connections)
 	{
 		if (s->GetConnectionId() == connection->GetConnectionId())
 			continue;
-
-		s->Send(reinterpret_cast<BYTE*>(&playerNewPacket), playerNewPacket._size);
+		s->Send(sendBuffer);
 	}
 
 	int32 playerCount = _connections.size();
@@ -96,8 +91,7 @@ void Sector::SendPlayerList(Connection* connection)
 		}
 
 		const int32 allocSize = packetHeaderSize + playerCntSize + (playerCnt * dataSize) + va;
-		BYTE* sendBuffer2 = new BYTE[allocSize];
-
+		byte* sendBuffer2 = new byte[allocSize];
 		BinaryWriter bw(sendBuffer2);
 		PacketHeader* pktHeader = bw.WriteReserve<PacketHeader>();
 		pktHeader->_type = PacketProtocol::S2C_PLAYERLIST;
@@ -123,22 +117,19 @@ void Sector::SendPlayerList(Connection* connection)
 			bw.WriteWString(p->GetPlayerName(), puserNameSize);
 			bw.Write((int8)p->GetPlayerType()); // 75
 		}
-
-		connection->Send(sendBuffer2, pktHeader->_pktSize);
-
-		if (sendBuffer2)
-		{
-			delete[] sendBuffer2;
-			sendBuffer2 = nullptr;
-		}
+		ThreadSafeSharedPtr sharedSendBuffer2 = ThreadSafeSharedPtr(reinterpret_cast<PACKET_HEADER*>(sendBuffer2), true);
+		connection->Send(sharedSendBuffer2);
 	}
 }
 
 void Sector::SendPlayerRemoveList(Connection* connection)
 {
+	LockGuard lock(&_spinLock);
 	Player* player = connection->GetPlayer();
+	int32 playerCount = _connections.size();
 
-	BYTE sendBuffer[100];
+	// SendBuffer* sendBuffer = new SendBuffer(100);
+	byte* sendBuffer = new byte[100];
 	BinaryWriter bw(sendBuffer);
 	PacketHeader* pktHeader = bw.WriteReserve<PacketHeader>();
 
@@ -159,9 +150,6 @@ void Sector::SendPlayerRemoveList(Connection* connection)
 	pktHeader->_type = PacketProtocol::S2C_PLAYEROUT;
 	pktHeader->_pktSize = bw.GetWriterSize();
 
-	LockGuard lock(&_spinLock);
-	int32 playerCount = _connections.size();
-
 	if (playerCount > 0)
 	{
 		int32 packetHeaderSize = 4;
@@ -170,8 +158,7 @@ void Sector::SendPlayerRemoveList(Connection* connection)
 		int32 playerCnt = _connections.size();
 
 		const int32 allocSize = packetHeaderSize + playerCntSize + (playerCnt * dataSize);
-		BYTE* sendBuffer2 = new BYTE[allocSize];
-
+		byte* sendBuffer2 = new byte[allocSize];
 		BinaryWriter bw(sendBuffer2);
 		PacketHeader* pktHeader = bw.WriteReserve<PacketHeader>();
 		pktHeader->_type = PacketProtocol::S2C_PLAYERREMOVELIST;
@@ -183,21 +170,15 @@ void Sector::SendPlayerRemoveList(Connection* connection)
 			Player* p = s->GetPlayer();
 			bw.Write(s->GetConnectionId());
 		}
-
-		connection->Send(sendBuffer2, pktHeader->_pktSize);
-
-		if (sendBuffer2)
-		{
-			delete[] sendBuffer2;
-			sendBuffer2 = nullptr;
-		}
+		ThreadSafeSharedPtr safeSendBuffer2 = ThreadSafeSharedPtr(reinterpret_cast<PACKET_HEADER*>(sendBuffer2), true);
+		connection->Send(safeSendBuffer2);
 	}
-
+	ThreadSafeSharedPtr safeSendBuffer = ThreadSafeSharedPtr(reinterpret_cast<PACKET_HEADER*>(sendBuffer), true);
 	for (auto s : _connections)
 	{
 		if (s->GetConnectionId() == connection->GetConnectionId())
 			continue;
 
-		s->Send(sendBuffer, pktHeader->_pktSize);
+		s->Send(safeSendBuffer);
 	}
 }

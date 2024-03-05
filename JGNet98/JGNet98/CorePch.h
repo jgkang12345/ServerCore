@@ -23,3 +23,5 @@
 #include "BinaryReader.h"
 #include "BinaryWriter.h"
 #include "packet.h"
+#include "SendBuffer.h"
+#include "ThreadSafeSharedPtr.h"

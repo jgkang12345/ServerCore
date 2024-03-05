@@ -13,7 +13,7 @@ public:
 
 	~ConnectionContext() 
 	{
-	
+		
 	}
 
 	static ConnectionContext* GetInstance() 
@@ -25,7 +25,7 @@ public:
 public:
 	void AddConnetion(int32 connectionId, Connection* connection);
 	void RemoveConnection(int32 connectionId);
-	void BroadCast(byte* dataPtr,  int32 dataSize);
+	void BroadCast(ThreadSafeSharedPtr buffer);
 	Connection* GetConnection(int32 connectionId);
 };
 

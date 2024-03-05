@@ -10,7 +10,7 @@ public:
 
 	void Set(Connection* connection);
 	void Reset(Connection* connection);
-	void BroadCast(Connection* connection, BYTE* sendBuffer, int32 sendSize);
+	void BroadCast(Connection* connection, ThreadSafeSharedPtr sendBuffer);
 
 	void SendPlayerList(Connection* connection);
 	void SendPlayerRemoveList(Connection* connection);

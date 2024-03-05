@@ -2,6 +2,7 @@
 #include "RecvBuffer.h"
 #include "ThreadSafeQueue.h"
 #include "LockBasedQueue.h"
+#include "ThreadSafeSharedPtr.h"
 class Player;
 /*
 	Client Connect Info Object Class
@@ -10,22 +11,22 @@ class Player;
 class Connection
 {
 protected:
-	CriticalSectionObject	_cs;
-	JGOverlapped			_recvOverlapped;
-	JGOverlapped			_sendOverlapped;
-	SOCKET					_socket;
-	SOCKADDR_IN				_sockAddrIn;
-	uint32					_connectionId;
-	RecvBuffer				_recvBuffer;
-	Player*					_player = nullptr;
-	std::queue<byte*>		_sendQueue;
+	CriticalSectionObject					_cs;
+	JGOverlapped							_recvOverlapped;
+	JGOverlapped							_sendOverlapped;
+	SOCKET									_socket;
+	SOCKADDR_IN								_sockAddrIn;
+	uint32									_connectionId;
+	RecvBuffer								_recvBuffer;
+	Player*									_player = nullptr;
+	std::queue<ThreadSafeSharedPtr>			_sendRefCountQueue;
 
 public:
 	Connection(const SOCKET& socket, const SOCKADDR_IN& sockAddrIn);
 	virtual ~Connection();
-
-	void Send(byte* buffer, int32 bufferSize);
-	void SendEx(byte* buffer);
+	void Send(ThreadSafeSharedPtr buffer);
+	void SendEx(ThreadSafeSharedPtr buffer);
+	void SendEx();
 	void Recv(int32 numOfBytes);
 
 public:
@@ -46,4 +47,3 @@ public:
 	void SendProc(bool ret, int32 numOfBytes);
 	void RecvProc(bool ret, int32 numOfBytes);
 };
-

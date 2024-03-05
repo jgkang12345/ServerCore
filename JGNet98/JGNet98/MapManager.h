@@ -45,7 +45,7 @@ public:
 	int32 ConvertSectorIndex(Creature* creature);
 	int32 ConvertSectorIndex(const Vector3& v3);
 	void ConvertSectorIndexAdjacentIndex(int32 index, std::vector<int32>& out);
-	void BroadCast(Creature* creature, BYTE* sendBuffer, int32 sendSize);
+	void BroadCast(Creature* creature, ThreadSafeSharedPtr sendBuffer);
 	void FindPath(const Vector3& dest, const Vector3 start, std::vector<Pos>& path);
 	std::vector<Sector*>& GetSectors() { return _sectors; }
 };

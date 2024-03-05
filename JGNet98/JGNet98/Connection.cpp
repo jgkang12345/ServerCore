@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Connection.h"
 #include "Player.h"
-
+#include "ConnectionContext.h"
 Connection::Connection(const SOCKET& socket, const SOCKADDR_IN& sockAddrIn)
 	: _socket(socket), _sockAddrIn(sockAddrIn), _connectionId(0)
 {
@@ -19,27 +19,31 @@ Connection::~Connection()
 
 	closesocket(_socket);
 }
-// ÁøÂ¥ Send
-void Connection::SendEx(byte* newBuffer)
-{
-	if (newBuffer != nullptr)
-	{
-		_sendOverlapped.AddPush();
-		_sendQueue.push(newBuffer);
-	}
-	else
-	{
-		_sendOverlapped.ReAddPush();
-	}
 
-	WSABUF wsaBuffer; 
-	DWORD sendBytes; 
+void Connection::Send(ThreadSafeSharedPtr buffer)
+{
+	LockGuard lockGuard(&_cs);
+	SendEx(buffer);
+}
+
+void Connection::SendEx(ThreadSafeSharedPtr newBuffer)
+{
+	if (newBuffer)
+		_sendRefCountQueue.push(newBuffer);
+
+	SendEx();
+}
+
+void Connection::SendEx()
+{
+	WSABUF wsaBuffer;
+	DWORD sendBytes;
 	DWORD flag = 0;
 
-	byte* buffer = _sendQueue.front();
-	int32 bufferSize = reinterpret_cast<PacketHeader*>(buffer)->_pktSize;
+	ThreadSafeSharedPtr buffer = _sendRefCountQueue.front();
 
-	wsaBuffer.buf = reinterpret_cast<CHAR*>(buffer);
+	int32 bufferSize = buffer->_size;
+	wsaBuffer.buf = reinterpret_cast<CHAR*>(buffer.get());
 	wsaBuffer.len = bufferSize;
 	if (WSASend(_socket, &wsaBuffer, 1, &sendBytes, flag, &_sendOverlapped, NULL) == SOCKET_ERROR)
 	{
@@ -57,18 +61,8 @@ void Connection::SendEx(byte* newBuffer)
 		else
 		{
 			wprintf_s(L"ReSend ErrorCode %d\n", errorCode);
-			SendEx(newBuffer);
+			SendEx();
 		}
-	}
-}
-
-void Connection::Send(byte* buffer, int32 bufferSize)
-{
-	byte* newBuffer = new byte[bufferSize];
-	::memcpy(newBuffer, buffer, bufferSize);
-	{
-		LockGuard lockGuard(&_cs);
-		SendEx(newBuffer);
 	}
 }
 
@@ -135,36 +129,25 @@ void Connection::SendProc(bool ret, int32 numOfBytes)
 			else if (errorCode == WSAECONNRESET || errorCode == WSAECONNABORTED)
 			{
 				wprintf_s(L"Client DisConnect %d\n", errorCode);
-				while (_sendQueue.empty())
-				{
-					byte* packet = _sendQueue.front();
-					delete[] packet;
-					_sendQueue.pop();
-				}
+				while (_sendRefCountQueue.empty())
+					_sendRefCountQueue.pop();
 			}
 			else
 			{
 				wprintf_s(L"ReSend ErrorCode %d\n", errorCode);
-				if (!_sendQueue.empty())
-				{
-					SendEx(nullptr);
-				}
+				if (!_sendRefCountQueue.empty())
+					SendEx();
 			}
 		}
 	}
 	else
 	{
-		if (_sendQueue.empty())
+		if (_sendRefCountQueue.empty())
 			return;
+		_sendRefCountQueue.pop();
 
-		_sendOverlapped.ReducePop();
-		delete[] _sendQueue.front();
-		_sendQueue.pop();
-
-		if (!_sendQueue.empty()) 
-		{
-			SendEx(nullptr); 
-		}
+		if (!_sendRefCountQueue.empty())
+			SendEx();
 	}
 }
 

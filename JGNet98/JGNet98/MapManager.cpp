@@ -246,7 +246,7 @@ void MapManager::ConvertSectorIndexAdjacentIndex(int32 index, std::vector<int32>
 	}
 }
 
-void MapManager::BroadCast(Creature* creature, BYTE* sendBuffer, int32 sendSize)
+void MapManager::BroadCast(Creature* creature, ThreadSafeSharedPtr sendBuffer)
 {
 	int32 hereIndex = ConvertSectorIndex(creature->GetPos());
 
@@ -259,11 +259,11 @@ void MapManager::BroadCast(Creature* creature, BYTE* sendBuffer, int32 sendSize)
 	{
 	case PLAYER:
 		for (auto item : adjacent)
-			_sectors[item]->BroadCast(static_cast<Player*>(creature)->GetConnection(), sendBuffer, sendSize);
+			_sectors[item]->BroadCast(static_cast<Player*>(creature)->GetConnection(), sendBuffer);
 		break;
 	case MONSTER:
 		for (auto item : adjacent)
-			_sectors[item]->BroadCast(nullptr, sendBuffer, sendSize);
+			_sectors[item]->BroadCast(nullptr, sendBuffer);
 		break;
 	}
 }
