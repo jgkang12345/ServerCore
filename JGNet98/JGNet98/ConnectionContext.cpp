@@ -24,6 +24,32 @@ void ConnectionContext::BroadCast(ThreadSafeSharedPtr buffer)
 	}
 }
 
+void ConnectionContext::HeartBeatPing()
+{
+	std::vector<Connection*> jobList;
+	{
+		LockGuard lockGuard(&_spinLock);
+		int32 nowTick = ::GetTickCount64();
+		for (auto& connection : _connectionContext)
+		{
+			if (!connection.second->ISHeartBeatPing())
+				continue;
+
+			bool connect = connection.second->HeartBeatPing(nowTick);
+			if (!connect)
+			{
+				jobList.push_back(connection.second);
+			}
+		}
+	}
+	for (auto& connection : jobList)
+	{
+		wprintf_s(L"connectionId: %d closeSocket\n", connection->GetConnectionId());
+		connection->OnDisconnect();
+		delete connection;
+	}
+}
+
 Connection* ConnectionContext::GetConnection(int32 connectionId)
 {
 	LockGuard lockGuard(&_spinLock);

@@ -2,9 +2,8 @@
 class ConnectionContext
 {
 private:
-	std::map<int32, Connection*> _connectionContext;
-	SpinLock					 _spinLock;
-
+	std::map<int32, Connection*>				 _connectionContext;
+	SpinLock									 _spinLock;
 public:
 	ConnectionContext() 
 	{
@@ -26,6 +25,7 @@ public:
 	void AddConnetion(int32 connectionId, Connection* connection);
 	void RemoveConnection(int32 connectionId);
 	void BroadCast(ThreadSafeSharedPtr buffer);
+	void HeartBeatPing();
 	Connection* GetConnection(int32 connectionId);
 };
 

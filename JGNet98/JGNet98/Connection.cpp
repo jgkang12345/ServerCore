@@ -2,8 +2,9 @@
 #include "Connection.h"
 #include "Player.h"
 #include "ConnectionContext.h"
+#include "MapManager.h"
 Connection::Connection(const SOCKET& socket, const SOCKADDR_IN& sockAddrIn)
-	: _socket(socket), _sockAddrIn(sockAddrIn), _connectionId(0)
+	: _socket(socket), _sockAddrIn(sockAddrIn), _connectionId(0), _lastHertbitPing(0), _heartbitPingStart(false)
 {
 	_recvOverlapped.iocpType = JGOverlapped::IOCPType::Recv;
 	_sendOverlapped.iocpType = JGOverlapped::IOCPType::Send;
@@ -16,8 +17,6 @@ Connection::~Connection()
 {
 	if (_player)
 		delete _player;
-
-	closesocket(_socket);
 }
 
 void Connection::Send(ThreadSafeSharedPtr buffer)
@@ -29,7 +28,7 @@ void Connection::Send(ThreadSafeSharedPtr buffer)
 void Connection::SendEx(ThreadSafeSharedPtr newBuffer)
 {
 	if (newBuffer)
-		_sendRefCountQueue.push(newBuffer);
+		_sendQueue.push(newBuffer);
 
 	SendEx();
 }
@@ -40,7 +39,8 @@ void Connection::SendEx()
 	DWORD sendBytes;
 	DWORD flag = 0;
 
-	ThreadSafeSharedPtr buffer = _sendRefCountQueue.front();
+	ThreadSafeSharedPtr buffer = _sendQueue.front();
+	_sendQueue.pop();
 
 	int32 bufferSize = buffer->_size;
 	wsaBuffer.buf = reinterpret_cast<CHAR*>(buffer.get());
@@ -57,11 +57,6 @@ void Connection::SendEx()
 		else if (errorCode == WSAECONNRESET || errorCode == WSAECONNABORTED)
 		{
 			wprintf_s(L"Client DisConnect %d\n", errorCode);
-		}
-		else
-		{
-			wprintf_s(L"ReSend ErrorCode %d\n", errorCode);
-			SendEx();
 		}
 	}
 }
@@ -106,7 +101,12 @@ void Connection::OnRecv(Connection* connection, byte* dataPtr, int32 dataLen)
 
 void Connection::OnDisconnect()
 {
-
+	if (_player)
+	{
+		MapManager::GetInstance()->ReSet(_player);
+	}
+	ConnectionContext::GetInstance()->RemoveConnection(_connectionId);
+	closesocket(_socket);
 }
 
 void Connection::OnConnect()
@@ -118,35 +118,22 @@ void Connection::SendProc(bool ret, int32 numOfBytes)
 	LockGuard lockGuard(&_cs);
 	if (!ret) 
 	{
-		{
-			LockGuard lockGuard(&_cs);
-			int32 errorCode = WSAGetLastError();
+		int32 errorCode = WSAGetLastError();
 
-			if (errorCode == WSAEWOULDBLOCK)
-			{
-				wprintf_s(L"WSA Send Block Error\n");
-			}
-			else if (errorCode == WSAECONNRESET || errorCode == WSAECONNABORTED)
-			{
-				wprintf_s(L"Client DisConnect %d\n", errorCode);
-				while (_sendRefCountQueue.empty())
-					_sendRefCountQueue.pop();
-			}
-			else
-			{
-				wprintf_s(L"ReSend ErrorCode %d\n", errorCode);
-				if (!_sendRefCountQueue.empty())
-					SendEx();
-			}
+		if (errorCode == WSAEWOULDBLOCK)
+		{
+			wprintf_s(L"WSA Send Block Error\n");
+		}
+		else if (errorCode == WSAECONNRESET || errorCode == WSAECONNABORTED)
+		{
+			wprintf_s(L"Client DisConnect %d\n", errorCode);
+			while (_sendQueue.empty())
+				_sendQueue.pop();
 		}
 	}
 	else
 	{
-		if (_sendRefCountQueue.empty())
-			return;
-		_sendRefCountQueue.pop();
-
-		if (!_sendRefCountQueue.empty())
+		if (!_sendQueue.empty())
 			SendEx();
 	}
 }
@@ -155,11 +142,35 @@ void Connection::RecvProc(bool ret, int32 numOfBytes)
 {
 	if (ret == false || numOfBytes == 0)
 	{
-		OnDisconnect();
-		delete this;
+		Connection* me = ConnectionContext::GetInstance()->GetConnection(_connectionId);
+
+		if (me == nullptr)
+			return;
+		else
+		{
+			OnDisconnect();
+			delete this;
+		}
 	}
 	else
 	{
 		Recv(numOfBytes);
 	}
+}
+
+bool Connection::HeartBeatPing(int32 currentTick)
+{
+	if (_lastHertbitPing == 0)
+		_lastHertbitPing = currentTick;
+
+	int32 deltaTick = currentTick - _lastHertbitPing;
+	if (deltaTick > 1000 * 8)
+		return false;
+}
+
+void Connection::SetHeartBeat()
+{
+	int32 currentTick = GetTickCount64();
+	_lastHertbitPing = currentTick;
+	_heartbitPingStart = true;
 }

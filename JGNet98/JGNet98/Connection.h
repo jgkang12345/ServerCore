@@ -19,7 +19,9 @@ protected:
 	uint32									_connectionId;
 	RecvBuffer								_recvBuffer;
 	Player*									_player = nullptr;
-	std::queue<ThreadSafeSharedPtr>			_sendRefCountQueue;
+	std::queue<ThreadSafeSharedPtr>			_sendQueue;
+	int32									_lastHertbitPing;
+	bool									_heartbitPingStart;
 
 public:
 	Connection(const SOCKET& socket, const SOCKADDR_IN& sockAddrIn);
@@ -46,4 +48,10 @@ public:
 	};
 	void SendProc(bool ret, int32 numOfBytes);
 	void RecvProc(bool ret, int32 numOfBytes);
+	bool HeartBeatPing(int32 currentTick);
+	void SetHeartBeat();
+	bool ISHeartBeatPing() {
+		return _heartbitPingStart
+			;
+	}
 };

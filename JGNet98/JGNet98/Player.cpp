@@ -23,7 +23,7 @@ Player::Player(
 
 Player::~Player()
 {
-	MapManager::GetInstance()->ReSet(this);
+	
 }
 
 void Player::PlayerSync(const Vector3& pos, State state, Dir dir, Dir mousedir, const Quaternion& cameraLocalRotation, const Vector3& target, MoveType moveType, const Vector3 angle)

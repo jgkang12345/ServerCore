@@ -25,6 +25,11 @@ public:
 	{
 		return _isArray;
 	}
+
+	int32 GetRefCount() 
+	{
+		return _refCount;
+	}
 };
 
 class ThreadSafeSharedPtr
@@ -124,5 +129,10 @@ public:
 	PACKET_HEADER* get() 
 	{
 		return _ptr;
+	}
+
+	int32 GetRefCount() 
+	{
+		return _refCount->GetRefCount();
 	}
 };

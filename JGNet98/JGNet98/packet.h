@@ -95,4 +95,17 @@ public:
 	}
 };
 
+class HEARTBIT_PACKET : public PACKET_HEADER
+{
+public:
+	int32 lastHertbitPing;
+
+public:
+	HEARTBIT_PACKET() 
+	{
+		_code = PacketProtocol::S2C_HEARTBIT;
+		_size = sizeof(HEARTBIT_PACKET);
+	}
+};
+
 #pragma pack (pop)

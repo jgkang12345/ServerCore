@@ -67,20 +67,20 @@
     <ClInclude Include="LockBasedQueue.h">
       <Filter>Base</Filter>
     </ClInclude>
-    <ClInclude Include="RecvBuffer.h">
-      <Filter>Core\Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="SendBuffer.h">
-      <Filter>Core\Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="TCPConnector.h">
-      <Filter>Core\Thread</Filter>
-    </ClInclude>
     <ClInclude Include="ThreadSafeSharedPtr.h">
       <Filter>Core\Thread</Filter>
     </ClInclude>
     <ClInclude Include="JGNet98App.h">
       <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvBuffer.h">
+      <Filter>Core\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SendBuffer.h">
+      <Filter>Core\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="TCPConnector.h">
+      <Filter>Core\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -141,20 +141,20 @@
     <ClCompile Include="LockBasedQueue.cpp">
       <Filter>Base</Filter>
     </ClCompile>
-    <ClCompile Include="RecvBuffer.cpp">
-      <Filter>Core\Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="SendBuffer.cpp">
-      <Filter>Core\Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="TCPConnector.cpp">
-      <Filter>Core\Thread</Filter>
-    </ClCompile>
     <ClCompile Include="ThreadSafeSharedPtr.cpp">
       <Filter>Core\Thread</Filter>
     </ClCompile>
     <ClCompile Include="JGNet98App.cpp">
       <Filter>Core\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="RecvBuffer.cpp">
+      <Filter>Core\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="SendBuffer.cpp">
+      <Filter>Core\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="TCPConnector.cpp">
+      <Filter>Core\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
