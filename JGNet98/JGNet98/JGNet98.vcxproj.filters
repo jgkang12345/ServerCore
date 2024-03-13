@@ -70,9 +70,6 @@
     <ClInclude Include="ThreadSafeSharedPtr.h">
       <Filter>Core\Thread</Filter>
     </ClInclude>
-    <ClInclude Include="JGNet98App.h">
-      <Filter>Core\Thread</Filter>
-    </ClInclude>
     <ClInclude Include="RecvBuffer.h">
       <Filter>Core\Network</Filter>
     </ClInclude>
@@ -81,6 +78,24 @@
     </ClInclude>
     <ClInclude Include="TCPConnector.h">
       <Filter>Core\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="JGNet98App.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterManager.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomManager.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterTable.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnZone.h">
+      <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +159,6 @@
     <ClCompile Include="ThreadSafeSharedPtr.cpp">
       <Filter>Core\Thread</Filter>
     </ClCompile>
-    <ClCompile Include="JGNet98App.cpp">
-      <Filter>Core\Thread</Filter>
-    </ClCompile>
     <ClCompile Include="RecvBuffer.cpp">
       <Filter>Core\Network</Filter>
     </ClCompile>
@@ -155,6 +167,24 @@
     </ClCompile>
     <ClCompile Include="TCPConnector.cpp">
       <Filter>Core\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="JGNet98App.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="MonsterManager.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomManager.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="MonsterTable.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnZone.cpp">
+      <Filter>Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

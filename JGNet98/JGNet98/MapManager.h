@@ -2,7 +2,7 @@
 class Sector;
 class SpawnZone;
 class Creature;
-
+class Monster;
 class MapManager
 {
 private:
@@ -36,6 +36,7 @@ public:
 	}
 
 	void MapLoad(const char* filePath);
+	void MapLoadField(const char* filePath);
 	bool CanGo(int32 z, int32 x);
 	bool CanGo(const Pos& pos);
 	void Set(Creature* creature);
@@ -48,5 +49,9 @@ public:
 	void BroadCast(Creature* creature, ThreadSafeSharedPtr sendBuffer);
 	void FindPath(const Vector3& dest, const Vector3 start, std::vector<Pos>& path);
 	std::vector<Sector*>& GetSectors() { return _sectors; }
+	void ReSpawn(Monster* monster);
+	void Update(int32 currentTick);
+	void _SpawnMonster(int32 index, Monster* monster);
+	void _UnSpawnMonster(int32 index, Monster* monster);
 };
 

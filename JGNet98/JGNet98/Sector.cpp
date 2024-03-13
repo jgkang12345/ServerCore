@@ -2,6 +2,7 @@
 #include "Sector.h"
 #include "Connection.h"
 #include "Player.h"
+#include "Monster.h"
 Sector::Sector()
 {
 }
@@ -22,6 +23,20 @@ void Sector::Reset(Connection* connection)
 	LockGuard lock(&_spinLock);
 
 	_connections.erase(connection);
+}
+
+void Sector::Set(Monster* monster)
+{
+	LockGuard lock(&_spinLock);
+
+	_monsters.insert(monster);
+}
+
+void Sector::Reset(Monster* monster)
+{
+	LockGuard lock(&_spinLock);
+
+	_monsters.erase(monster);
 }
 
 void Sector::BroadCast(Connection* connection, ThreadSafeSharedPtr sendBuffer)
@@ -122,6 +137,50 @@ void Sector::SendPlayerList(Connection* connection)
 	}
 }
 
+void Sector::SendMonsterList(Connection* connection)
+{
+	BYTE* sendBuffer = new BYTE[4096];
+	BinaryWriter bw(sendBuffer);
+	PacketHeader* header = bw.WriteReserve<PacketHeader>();
+	{
+		LockGuard lock(&_spinLock);
+
+		const int32 cnt = _monsters.size();
+
+		bw.Write(cnt);
+
+		for (auto monster : _monsters)
+		{
+			State monsterState = monster->GetState();
+
+			if (monsterState == PATROL || monsterState == TRACE)
+				monsterState = MOVE;
+
+			bw.Write(monsterState);
+			bw.Write(monster->GetMonsterType());
+			bw.Write(monster->GetMonsterId());
+			bw.Write(monster->GetPos());
+			bw.Write(monster->GetHp());
+			bw.Write(monster->GetVDir());
+			bw.Write(monster->GetDest());
+
+			int32 connerSize = monster->GetConner().size();
+			bw.Write(connerSize);
+
+			for (int32 i = 0; i < connerSize; i++)
+			{
+				Pos pos = monster->GetConner()[i];
+				bw.Write(pos);
+			}
+		}
+	}
+
+	header->_pktSize = bw.GetWriterSize();
+	header->_type = S2C_MONSTERRENEWLIST;
+	ThreadSafeSharedPtr safeSendBuffer = ThreadSafeSharedPtr(reinterpret_cast<PACKET_HEADER*>(sendBuffer), true);
+	connection->Send(safeSendBuffer);
+}
+
 void Sector::SendPlayerRemoveList(Connection* connection)
 {
 	LockGuard lock(&_spinLock);
@@ -181,4 +240,28 @@ void Sector::SendPlayerRemoveList(Connection* connection)
 
 		s->Send(safeSendBuffer);
 	}
+}
+
+void Sector::SendMonsterRemoveList(Connection* connection)
+{
+	BYTE* sendBuffer = new BYTE[4096];
+	BinaryWriter bw(sendBuffer);
+	PacketHeader* header = bw.WriteReserve<PacketHeader>();
+	{
+		LockGuard lock(&_spinLock);
+
+		const int32 cnt = _monsters.size();
+
+		bw.Write(cnt);
+
+		for (auto monster : _monsters)
+		{
+			bw.Write(monster->GetMonsterId());
+		}
+	}
+
+	header->_pktSize = bw.GetWriterSize();
+	header->_type = S2C_MONSTERREMOVELIST;
+	ThreadSafeSharedPtr safeSendBuffer = ThreadSafeSharedPtr(reinterpret_cast<PACKET_HEADER*>(sendBuffer), true);
+	connection->Send(safeSendBuffer);
 }

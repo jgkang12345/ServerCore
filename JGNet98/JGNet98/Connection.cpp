@@ -166,6 +166,8 @@ bool Connection::HeartBeatPing(int32 currentTick)
 	int32 deltaTick = currentTick - _lastHertbitPing;
 	if (deltaTick > 1000 * 8)
 		return false;
+
+	return true;
 }
 
 void Connection::SetHeartBeat()

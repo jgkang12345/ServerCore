@@ -8,7 +8,7 @@ RecvBuffer::RecvBuffer() : _bufferSize(RECV_BUFFER_LEN)
 
 RecvBuffer::~RecvBuffer()
 {
-
+	
 }
 
 int32 RecvBuffer::GetDataSize()

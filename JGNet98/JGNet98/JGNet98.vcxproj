@@ -154,12 +154,17 @@
     <ClInclude Include="Lock.h" />
     <ClInclude Include="LockBasedQueue.h" />
     <ClInclude Include="MapManager.h" />
+    <ClInclude Include="Monster.h" />
+    <ClInclude Include="MonsterManager.h" />
+    <ClInclude Include="MonsterTable.h" />
     <ClInclude Include="packet.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="RandomManager.h" />
     <ClInclude Include="RecvBuffer.h" />
     <ClInclude Include="Sector.h" />
     <ClInclude Include="SendBuffer.h" />
+    <ClInclude Include="SpawnZone.h" />
     <ClInclude Include="TCPConnector.h" />
     <ClInclude Include="TCPListener.h" />
     <ClInclude Include="ThreadManager.h" />
@@ -182,6 +187,9 @@
     <ClCompile Include="Lock.cpp" />
     <ClCompile Include="LockBasedQueue.cpp" />
     <ClCompile Include="MapManager.cpp" />
+    <ClCompile Include="Monster.cpp" />
+    <ClCompile Include="MonsterManager.cpp" />
+    <ClCompile Include="MonsterTable.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -189,9 +197,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="RandomManager.cpp" />
     <ClCompile Include="RecvBuffer.cpp" />
     <ClCompile Include="Sector.cpp" />
     <ClCompile Include="SendBuffer.cpp" />
+    <ClCompile Include="SpawnZone.cpp" />
     <ClCompile Include="TCPConnector.cpp" />
     <ClCompile Include="TCPListener.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
