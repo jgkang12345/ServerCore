@@ -43,7 +43,7 @@ public:
 	virtual void ReSpawn();
 	virtual void ExpUp(float exp);
 	virtual void LevelUp();
-	virtual void StartPointUp();
+	virtual void StatPointUp();
 	virtual void StatPointDown();
 	virtual void UpStat(int32 type);
 	virtual void SendStatInfo();
