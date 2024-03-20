@@ -46,7 +46,6 @@ void ConnectionContext::HeartBeatPing()
 	{
 		wprintf_s(L"connectionId: %d closeSocket\n", connection->GetConnectionId());
 		connection->OnDisconnect();
-		delete connection;
 	}
 }
 

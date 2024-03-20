@@ -11,6 +11,7 @@ class Player;
 class Connection
 {
 protected:
+	volatile int64							_deletePlayer = 0;
 	CriticalSectionObject					_cs;
 	JGOverlapped							_recvOverlapped;
 	JGOverlapped							_sendOverlapped;

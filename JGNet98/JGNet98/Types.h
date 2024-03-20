@@ -132,13 +132,13 @@ struct Pos
 
 enum ServerPort : int32
 {
+	WORLD_SERVER = 29999,
 	NOVICE_SERVER = 30002,
 	LOGIN_SERVER = 30003,
 	VILLAGE_SERVER = 30004,
 	INTERMEDIATE_SERVER = 30005,
 	HIGHT_SERVER = 30006
 };
-
 
 struct Quaternion
 {
@@ -283,4 +283,13 @@ enum PacketProtocol : __int16
 	C2S_PLAYERSKILLSYNC,
 	S2C_HEARTBIT,
 	C2S_HEARTBIT,
+	S2C_SERVERLIST,
+};
+
+enum ServerType : int32
+{
+	VILLAGE,
+	NOVICE,
+	INTERMEDIATE,
+	HIGH
 };

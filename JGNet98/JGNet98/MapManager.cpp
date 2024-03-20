@@ -470,6 +470,8 @@ void MapManager::FindPath(const Vector3& dest, const Vector3 start, std::vector<
 		parent[startPos] = startPos;
 	}
 
+	bool canGo = true;
+
 	while (pq.empty() == false)
 	{
 		PQNode node = pq.top();
@@ -479,6 +481,12 @@ void MapManager::FindPath(const Vector3& dest, const Vector3 start, std::vector<
 
 		if (best[pos.z][pos.x] < node.f)
 			continue;
+
+		if (pq.size() > 30) 
+		{
+			canGo = false;
+			break;
+		}
 
 		if (node.pos == endPos)
 			break;
@@ -498,6 +506,12 @@ void MapManager::FindPath(const Vector3& dest, const Vector3 start, std::vector<
 			best[nextPos.z][nextPos.x] = nextG + nextH;
 			parent[nextPos] = pos;
 		}
+	}
+
+	if (!canGo)
+	{
+		path.clear();
+		return;
 	}
 
 	Pos pos = endPos;

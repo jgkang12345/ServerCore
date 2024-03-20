@@ -56,7 +56,7 @@ void Connection::SendEx()
 		}
 		else if (errorCode == WSAECONNRESET || errorCode == WSAECONNABORTED)
 		{
-			wprintf_s(L"Client DisConnect %d\n", errorCode);
+			// wprintf_s(L"Client DisConnect %d\n", errorCode);
 		}
 	}
 }
@@ -101,12 +101,18 @@ void Connection::OnRecv(Connection* connection, byte* dataPtr, int32 dataLen)
 
 void Connection::OnDisconnect()
 {
+	int64 desired = 1;
+	int64 expected = 0;
+	if (InterlockedCompareExchange64(&_deletePlayer, desired, expected) == 1)
+		return;
+
 	if (_player)
 	{
 		MapManager::GetInstance()->ReSet(_player);
 	}
 	ConnectionContext::GetInstance()->RemoveConnection(_connectionId);
 	closesocket(_socket);
+	delete this;
 }
 
 void Connection::OnConnect()
@@ -126,7 +132,7 @@ void Connection::SendProc(bool ret, int32 numOfBytes)
 		}
 		else if (errorCode == WSAECONNRESET || errorCode == WSAECONNABORTED)
 		{
-			wprintf_s(L"Client DisConnect %d\n", errorCode);
+			// wprintf_s(L"Client DisConnect %d\n", errorCode);
 			while (_sendQueue.empty())
 				_sendQueue.pop();
 		}
@@ -149,7 +155,6 @@ void Connection::RecvProc(bool ret, int32 numOfBytes)
 		else
 		{
 			OnDisconnect();
-			delete this;
 		}
 	}
 	else
