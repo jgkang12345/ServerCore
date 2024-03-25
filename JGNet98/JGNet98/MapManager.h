@@ -14,7 +14,7 @@ private:
 	std::vector<Sector*>							_sectors;		// Sector
 	std::vector<SpawnZone*>							_spawnZones;	// SpawnZones
 	SpinLock										_spinLock;
-
+	ServerType										_serverType;
 	// 자기자신, 위, 오른위, 오른, 오른아래, 아래, 왼아래, 왼, 왼위
 	int32 _d[9] = { 0,0,0,0,0,0,0,0,0 };
 
@@ -35,8 +35,8 @@ public:
 
 	}
 
-	void MapLoad(const char* filePath);
-	void MapLoadField(const char* filePath);
+	void MapLoad(ServerType serverType, const char* filePath);
+	void MapLoadField(ServerType serverType, const char* filePath);
 	bool CanGo(int32 z, int32 x);
 	bool CanGo(const Pos& pos);
 	void Set(Creature* creature);
@@ -53,5 +53,6 @@ public:
 	void Update(int32 currentTick);
 	void _SpawnMonster(int32 index, Monster* monster);
 	void _UnSpawnMonster(int32 index, Monster* monster);
+	ServerType GetServerType() { return _serverType; }
 };
 

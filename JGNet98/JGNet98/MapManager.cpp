@@ -8,8 +8,9 @@
 #define SectorBlockSize 32
 #define ADJACENT_COUNT 9
 
-void MapManager::MapLoad(const char* filePath)
+void MapManager::MapLoad(ServerType serverType, const char* filePath)
 {
+	_serverType = serverType;
 	FILE* fp = NULL;
 	fopen_s(&fp, filePath, "r");
 
@@ -59,8 +60,9 @@ void MapManager::MapLoad(const char* filePath)
 	_d[8] = -1 - _zRange;
 }
 
-void MapManager::MapLoadField(const char* filePath)
+void MapManager::MapLoadField(ServerType serverType, const char* filePath)
 {
+	_serverType = serverType;
 	FILE* fp = NULL;
 	fopen_s(&fp, filePath, "r");
 

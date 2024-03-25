@@ -12,7 +12,10 @@ class PLAYERINIT : public PACKET_HEADER
 public:
 	int32 userSQ;
 	int32 playerSQ;
-
+	float x;
+	float y;
+	float z;
+	ServerType type;
 public:
 	PLAYERINIT()
 	{
