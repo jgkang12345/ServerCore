@@ -27,5 +27,6 @@ public:
 	void BroadCast(ThreadSafeSharedPtr buffer);
 	void HeartBeatPing();
 	Connection* GetConnection(int32 connectionId);
+	int32 GetConnectionCnt() { return _connectionContext.size(); }
 };
 
