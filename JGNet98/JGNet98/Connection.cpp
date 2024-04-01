@@ -148,8 +148,8 @@ void Connection::RecvProc(bool ret, int32 numOfBytes)
 {
 	if (ret == false || numOfBytes == 0)
 	{
-		Connection* me = ConnectionContext::GetInstance()->GetConnection(_connectionId);
-
+		Connection* me = 
+			ConnectionContext::GetInstance()->GetConnection(_connectionId);
 		if (me == nullptr)
 			return;
 		else

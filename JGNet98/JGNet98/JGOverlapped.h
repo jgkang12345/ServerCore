@@ -1,4 +1,7 @@
 #pragma once
+/*
+	»Æ¿Âµ» Overlapped
+*/
 class Connection;
 struct JGOverlapped : public WSAOVERLAPPED
 {

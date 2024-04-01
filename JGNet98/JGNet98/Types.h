@@ -288,6 +288,8 @@ enum PacketProtocol : __int16
 	S2C_MONITORINIT,
 	S2C_LATECY,
 	S2C_CONNECTIONLIST,
+	C2S_PLAYERWHISPER,
+	S2C_PLAYERWHISPER,
 };
 
 enum ServerType : int32

@@ -29,7 +29,13 @@ void IOCPCore::Dispatch()
     LPOVERLAPPED    overlapped;
     ULONG_PTR       ulCompletionKey;
 
-    bool ret = GetQueuedCompletionStatus(_iocpHandle, &numOfBytes, &ulCompletionKey, &overlapped, INFINITE);
+    bool ret = GetQueuedCompletionStatus(
+        _iocpHandle, 
+        &numOfBytes, 
+        &ulCompletionKey, 
+        &overlapped, 
+        INFINITE);
+
     JGOverlapped* expendedOverlapped = reinterpret_cast<JGOverlapped*>(overlapped);
     Connection* con = expendedOverlapped->connection;
 
