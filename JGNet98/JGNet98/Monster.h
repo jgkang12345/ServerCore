@@ -15,12 +15,11 @@ class Monster : public Creature
 	};
 
 private:
-	CRITICAL_SECTION							_queueCs;
 	int32										_spawnZoneIndex;
 	MonsterType									_monsterType;
 	Vector3										_vDir;
 	int32										_monsterId;
-	Creature* _target = nullptr;
+	Creature*									_target = nullptr;
 	Vector3										_dest = { 0,0,0 };
 	std::vector<Pos>							_path;
 	std::vector<Pos>							_conner;
@@ -42,7 +41,7 @@ public:
 	MonsterType GetMonsterType() { return _monsterType; }
 	int32 GetMonsterId() { return _monsterId; }
 	virtual bool Attacked(Creature* Attacker, int32 damage);
-	void Update(int32 deltaTick);
+	void Update(uint64 deltaTick);
 	Vector3 GetVDir() { return _vDir; }
 	int32 GetSpawnPos() { return _spawnZoneIndex; }
 	void AttackCheck();
@@ -56,13 +55,13 @@ public:
 	int32 GetDefense() { return _defensive; }
 
 private:
-	void UpdateIdle(int32 deltaTcik);
-	void UpdateAttack(int32 deltaTcik);
-	void UpdateAttacked(int32 deltaTcik);
-	void UpdateDeath(int32 deltaTcik);
-	void UpdateCoolTime(int32 deltaTcik);
-	void UpdatePatrol(int32 deltaTcik);
-	void UpdateTrace(int32 deltaTcik);
+	void UpdateIdle(uint64  deltaTcik);
+	void UpdateAttack(uint64  deltaTcik);
+	void UpdateAttacked(uint64  deltaTcik);
+	void UpdateDeath(uint64  deltaTcik);
+	void UpdateCoolTime(uint64  deltaTcik);
+	void UpdatePatrol(uint64  deltaTcik);
+	void UpdateTrace(uint64  deltaTcik);
 	void SyncMonsterPacket();
 
 private:
@@ -84,6 +83,5 @@ private:
 
 	int32	_coolTimeLastTick = 0;
 	int32	_coolTimeSumTick = 0;
-
 };
 

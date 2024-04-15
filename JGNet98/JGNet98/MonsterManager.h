@@ -29,7 +29,7 @@ public:
 	void Init(int32 totalCnt);
 	void PushMonster(Monster* monster);
 	Monster* PopMonster(MonsterType type);
-	void Update(int32 currentTick);
+	void Update(uint32 currentTick);
 	void AttackedMonster(int32 monsterId, class Creature* attacker, int32 damage);
 };
 

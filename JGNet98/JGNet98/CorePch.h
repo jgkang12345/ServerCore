@@ -16,6 +16,7 @@
 #include <process.h>
 #include <WS2tcpip.h>
 #include <cassert>
+#include <MSWSock.h>
 #include "Types.h"
 #include "CoreMacro.h"
 #include "Lock.h"

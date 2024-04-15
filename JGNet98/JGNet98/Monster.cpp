@@ -12,23 +12,23 @@ Monster::Monster(int32 spawnZoneIndex, int32 monsterId, MonsterType type, const 
 	, Creature(CreatureType::MONSTER, pos, pos, State::IDLE, Dir::NONE, 1000, 1000, 100, 1.5f, false, 10, 0, 0)
 	, _monsterId(monsterId), _monsterType(type)
 {
-	InitializeCriticalSection(&_queueCs);
+
 }
 
 Monster::Monster(int32 monsterId, MonsterType type)
 	: _monsterId(monsterId), _monsterType(type), Creature(CreatureType::MONSTER, { 0,0,0 }, { 0,0,0 }, State::RESPAWN, Dir::NONE, 1000, 1000, 100, 1.5f, false, 10, 0, 0)
 {
-	DeleteCriticalSection(&_queueCs);
+
 }
 
 Monster::Monster(int32 monsterId) : _monsterId(monsterId), _monsterType(MonsterType::MonstrerTypeMax), Creature(CreatureType::MONSTER, { 0,0,0 }, { 0,0,0 }, State::RESPAWN, Dir::NONE, 1000, 1000, 100, 1.5f, false, 10, 0, 0)
 {
-	InitializeCriticalSection(&_queueCs);
+
 }
 
 Monster::Monster()
 {
-	InitializeCriticalSection(&_queueCs);
+
 }
 
 Monster::~Monster()
@@ -68,13 +68,10 @@ bool Monster::Attacked(Creature* Attacker, int32 damage)
 
 	MonsterAttackedInfo info{ Attacker, realDamge };
 	_tsQueue.Push(info);
-	//EnterCriticalSection(&_queueCs);
-	//_pushQueue.push(info);
-	//LeaveCriticalSection(&_queueCs);
 	return false;
 }
 
-void Monster::Update(int32 deltaTick)
+void Monster::Update(uint64  deltaTick)
 {
 	State prevState = _state;
 
@@ -139,7 +136,7 @@ void Monster::Spawn(const Vector3& nowPos, const Vector3& prevPos, int32 spawnIn
 	_death = false;
 }
 
-void Monster::UpdateIdle(int32 deltaTick)
+void Monster::UpdateIdle(uint64  deltaTick)
 {
 	_idleSumTick += deltaTick;
 
@@ -184,7 +181,7 @@ void Monster::UpdateIdle(int32 deltaTick)
 	_idleSumTick = 0;
 }
 
-void Monster::UpdateAttack(int32 deltaTick)
+void Monster::UpdateAttack(uint64  deltaTick)
 {
 	// TODO Attack 거리체크
 	Vector3 playerPos = _target->GetPos();
@@ -196,7 +193,7 @@ void Monster::UpdateAttack(int32 deltaTick)
 	_state = State::COOL_TIME;
 }
 
-void Monster::UpdateAttacked(int32 deltaTick)
+void Monster::UpdateAttacked(uint64  deltaTick)
 {
 	_attackedSumTick += deltaTick;
 
@@ -209,7 +206,7 @@ void Monster::UpdateAttacked(int32 deltaTick)
 	_attackedSumTick = 0;
 }
 
-void Monster::UpdateDeath(int32 currentTick)
+void Monster::UpdateDeath(uint64  currentTick)
 {
 	BYTE* sendBuffer = new BYTE[1024];
 	BinaryWriter bw(sendBuffer);
@@ -232,7 +229,7 @@ void Monster::UpdateDeath(int32 currentTick)
 	_target = nullptr;
 }
 
-void Monster::UpdateCoolTime(int32 deltaTick)
+void Monster::UpdateCoolTime(uint64  deltaTick)
 {
 	_coolTimeSumTick += deltaTick;
 
@@ -243,7 +240,7 @@ void Monster::UpdateCoolTime(int32 deltaTick)
 	_coolTimeSumTick = 0;
 }
 
-void Monster::UpdatePatrol(int32 deltaTcik)
+void Monster::UpdatePatrol(uint64 deltaTcik)
 {
 	Vector3 dir = Vector3{ _conner[0].x + 0.5f, 0, _conner[0].z + 0.5f } - _pos;
 	Vector3 prevDir = _vDir;
@@ -277,7 +274,7 @@ void Monster::UpdatePatrol(int32 deltaTcik)
 	_patrolSumTick = 0;
 }
 
-void Monster::UpdateTrace(int32 deltaTcik)
+void Monster::UpdateTrace(uint64 deltaTcik)
 {
 	bool flag = false;
 
@@ -363,17 +360,6 @@ void Monster::SyncMonsterPacket()
 		bw.Write(pos);
 	}
 
-	//int32 cnt = _damageQueue.size();
-	//bw.Write(cnt);
-
-	//while (_damageQueue.empty() == false)
-	//{
-	//	int32 damge = _damageQueue.front();
-	//	_damageQueue.pop();
-
-	//	bw.Write(damge);
-	//}
-
 	pktHeader->_type = PacketProtocol::S2C_MONSTERSYNC;
 	pktHeader->_pktSize = bw.GetWriterSize();
 
@@ -386,13 +372,6 @@ void Monster::AttackedProc()
 {
 	if (_state == COOL_TIME) return;
 
-	//int pushQueueSize = _tsQueue.GetPushQueueSize();
-	//if (pushQueueSize > 0)
-	//{
-	//	EnterCriticalSection(&_queueCs);
-	//	std::swap(_pushQueue, _popQueue);
-	//	LeaveCriticalSection(&_queueCs);
-	//}
 	bool swapQueue = _tsQueue.SwapQueue();
 	if (swapQueue == false)
 		return;
@@ -424,10 +403,6 @@ void Monster::PatrolDestSearch()
 	int32 dx[4] = { 0,5,0,-5 };
 	int32 dz[4] = { 5,0,-5,-0 };
 
-	/*thread_local std::mt19937 generator(std::random_device{}());
-	std::uniform_int_distribution<int> randomPos(0, 3);*/
-
-	// int32 randomDir = randomPos(generator);
 	int32 randomDir = RandomManager::GetInstance()->GetRandomDir();
 
 	int32 target_x = x + dx[randomDir];

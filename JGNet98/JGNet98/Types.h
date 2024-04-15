@@ -13,6 +13,7 @@ typedef wchar_t wchar;
 
 class Connection;
 typedef Connection* (*tConnectionFactroy)(const SOCKET&, const SOCKADDR_IN&);
+typedef Connection* (*tConnectionFactroy2)();
 
 struct PacketHeader
 {

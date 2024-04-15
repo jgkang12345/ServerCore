@@ -3,6 +3,17 @@
 #include "Player.h"
 #include "ConnectionContext.h"
 #include "MapManager.h"
+#include "TCPListener.h"
+
+Connection::Connection(): _connectionId(0), _lastHertbitPing(0), _heartbitPingStart(false)
+{
+	_socket = WSASocketW(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
+	_recvOverlapped.iocpType = JGOverlapped::IOCPType::Recv;
+	_sendOverlapped.iocpType = JGOverlapped::IOCPType::Send;
+	_recvOverlapped.connection = this;
+	_sendOverlapped.connection = this;
+}
+
 Connection::Connection(const SOCKET& socket, const SOCKADDR_IN& sockAddrIn)
 	: _socket(socket), _sockAddrIn(sockAddrIn), _connectionId(0), _lastHertbitPing(0), _heartbitPingStart(false)
 {
@@ -117,6 +128,7 @@ void Connection::OnDisconnect()
 
 void Connection::OnConnect()
 {
+
 }
 
 void Connection::SendProc(bool ret, int32 numOfBytes)
@@ -161,6 +173,22 @@ void Connection::RecvProc(bool ret, int32 numOfBytes)
 	{
 		Recv(numOfBytes);
 	}
+}
+
+void Connection::AcceptProc(bool ret, int32 numOfBytes, JGOverlapped* overlapped)
+{
+	SOCKET listenSocket = overlapped->acceptOwner->GetListenSocket();
+	::setsockopt(_socket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, reinterpret_cast<char*>(&listenSocket), sizeof(listenSocket));
+
+	::memset(&_sockAddrIn, 0, sizeof(_sockAddrIn));
+	int32 clientAddrSize = sizeof(_sockAddrIn);
+
+	::getpeername(_socket, reinterpret_cast<SOCKADDR*>(&_sockAddrIn), &clientAddrSize);
+	 
+	// TODO OnConnect Ã³¸®...
+	OnConnect();
+
+	overlapped->acceptOwner->Accept();
 }
 
 bool Connection::HeartBeatPing(int32 currentTick)

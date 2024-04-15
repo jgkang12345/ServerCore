@@ -550,7 +550,7 @@ void MapManager::_UnSpawnMonster(int32 index, Monster* monster)
 }
 
 
-void MapManager::Update(int32 currentTick)
+void MapManager::Update(uint64 currentTick)
 {
 	for (auto spawnZone : _spawnZones)
 		spawnZone->Update(currentTick);

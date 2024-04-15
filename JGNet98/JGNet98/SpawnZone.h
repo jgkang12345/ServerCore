@@ -7,8 +7,8 @@ class SpawnZone
 	};
 
 private:
-	int32				_lastTick = 0;
-	int32				_sumTick = 0;
+	uint64				_lastTick = 0;
+	uint64				_sumTick = 0;
 	BoundBox			_boundBox;
 	uint32				_index;
 	uint32				_nowSpawnCnt;
@@ -20,7 +20,7 @@ public:
 	SpawnZone(int32 index, int32 maxSpawnCount, const BoundBox& boundBox, MonsterType monsterType);
 	~SpawnZone();
 
-	void Update(int32 currentTick);
+	void Update(uint64 currentTick);
 	void Spawn();
 	void IncreaseSpawnCnt();
 	void DecreaseSpawnCnt();

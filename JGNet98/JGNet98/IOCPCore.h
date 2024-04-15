@@ -14,6 +14,7 @@ public:
 	~IOCPCore();
 
 	void RegisterIOCP(Connection* connection);
+	void RegisterIOCP(SOCKET socket);
 	void Dispatch();
 };
 

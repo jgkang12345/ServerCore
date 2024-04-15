@@ -50,7 +50,7 @@ public:
 	void FindPath(const Vector3& dest, const Vector3 start, std::vector<Pos>& path);
 	std::vector<Sector*>& GetSectors() { return _sectors; }
 	void ReSpawn(Monster* monster);
-	void Update(int32 currentTick);
+	void Update(uint64 currentTick);
 	void _SpawnMonster(int32 index, Monster* monster);
 	void _UnSpawnMonster(int32 index, Monster* monster);
 	ServerType GetServerType() { return _serverType; }

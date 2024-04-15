@@ -23,6 +23,11 @@ void IOCPCore::RegisterIOCP(Connection* connection)
     connection->Recv(0);
 }
 
+void IOCPCore::RegisterIOCP(SOCKET socket)
+{
+    CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket), _iocpHandle, 0, 0);
+}
+
 void IOCPCore::Dispatch()
 {
     DWORD           numOfBytes = 0;
@@ -47,6 +52,11 @@ void IOCPCore::Dispatch()
 
     case JGOverlapped::IOCPType::Recv:
         con->RecvProc(ret, numOfBytes);
+        break;
+
+    case JGOverlapped::IOCPType::Accept:
+        con->AcceptProc(ret, numOfBytes, expendedOverlapped);
+        RegisterIOCP(con);
         break;
     }
 }

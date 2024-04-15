@@ -3,6 +3,7 @@
 #include "ThreadSafeQueue.h"
 #include "LockBasedQueue.h"
 #include "ThreadSafeSharedPtr.h"
+#include "JGOverlapped.h"
 class Player;
 /*
 	Client Connect Info Object Class
@@ -25,6 +26,7 @@ protected:
 	bool									_heartbitPingStart;
 
 public:
+	Connection();
 	Connection(const SOCKET& socket, const SOCKADDR_IN& sockAddrIn);
 	virtual ~Connection();
 	void Send(ThreadSafeSharedPtr buffer);
@@ -49,10 +51,12 @@ public:
 	};
 	void SendProc(bool ret, int32 numOfBytes);
 	void RecvProc(bool ret, int32 numOfBytes);
+	void AcceptProc(bool ret, int32 numOfBytes, JGOverlapped* overlapped);
 	bool HeartBeatPing(int32 currentTick);
 	void SetHeartBeat();
 	bool ISHeartBeatPing() {
 		return _heartbitPingStart
 			;
 	}
+	RecvBuffer& GetRecvBuffer() { return _recvBuffer; }
 };

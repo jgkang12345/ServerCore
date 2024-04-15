@@ -13,9 +13,9 @@ SpawnZone::~SpawnZone()
 	DeleteCriticalSection(&_cs);
 }
 
-void SpawnZone::Update(int32 currentTick)
+void SpawnZone::Update(uint64 currentTick)
 {
-	int32 deltaTick = currentTick - _lastTick;
+	uint32 deltaTick = currentTick - _lastTick;
 	_sumTick += deltaTick;
 	_lastTick = currentTick;
 

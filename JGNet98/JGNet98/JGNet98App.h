@@ -16,7 +16,7 @@ public:
 	JGNet98App(
 		const char* ip
 		, uint16 port
-		, tConnectionFactroy connectionFactoryFunc
+		, tConnectionFactroy2 connectionFactoryFunc
 	);
 
 	~JGNet98App();

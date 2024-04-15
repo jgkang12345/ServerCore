@@ -54,7 +54,7 @@ Monster* MonsterManager::PopMonster(MonsterType type)
 	return ret;
 }
 
-void MonsterManager::Update(int32 currentTick)
+void MonsterManager::Update(uint32 currentTick)
 {
 	_lastTick = _lastTick == 0 ? currentTick : _lastTick;
 	int32 deltaTick = currentTick - _lastTick;

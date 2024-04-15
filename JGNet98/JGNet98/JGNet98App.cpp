@@ -3,7 +3,7 @@
 #include "IOCPCore.h"
 #include "TCPListener.h"
 
-JGNet98App::JGNet98App(const char* ip, uint16 port, tConnectionFactroy tConnectionFactoryFunc)
+JGNet98App::JGNet98App(const char* ip, uint16 port, tConnectionFactroy2 tConnectionFactoryFunc)
 {
 	WSADATA wsaData;
 
@@ -13,6 +13,7 @@ JGNet98App::JGNet98App(const char* ip, uint16 port, tConnectionFactroy tConnecti
 
 	_iocpCore = new IOCPCore();
 	_tcpListener = new TCPListener(ip,port, tConnectionFactoryFunc);
+	_iocpCore->RegisterIOCP(_tcpListener->GetListenSocket());
 }
 
 JGNet98App::~JGNet98App()
@@ -28,12 +29,7 @@ void JGNet98App::Run(const wchar* appName)
 {
 	wprintf(L"%s\n", appName);
 	_tcpListener->Listen();
-
-	while (true)
-	{
-		Connection* newConnector = _tcpListener->Accept();
-		_iocpCore->RegisterIOCP(newConnector);
-	}
+	_tcpListener->Accept();
 }
 
 IOCPCore* JGNet98App::GetIOCPCore()
