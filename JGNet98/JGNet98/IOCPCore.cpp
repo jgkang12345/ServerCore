@@ -41,9 +41,12 @@ void IOCPCore::Dispatch()
         &overlapped, 
         INFINITE);
 
+    // TODO 여기서 ret가 false 일경우 체크 
+
     JGOverlapped* expendedOverlapped = reinterpret_cast<JGOverlapped*>(overlapped);
     Connection* con = expendedOverlapped->connection;
 
+    // TODO 상속 구조 활용하기
     switch (expendedOverlapped->iocpType)
     {
     case JGOverlapped::IOCPType::Send:

@@ -24,6 +24,7 @@ protected:
 	std::queue<ThreadSafeSharedPtr>			_sendQueue;
 	int32									_lastHertbitPing;
 	bool									_heartbitPingStart;
+	volatile int64							_disConnect = 0;
 
 public:
 	Connection();

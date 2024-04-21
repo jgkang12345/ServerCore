@@ -79,9 +79,6 @@
     <ClInclude Include="TCPConnector.h">
       <Filter>Core\Network</Filter>
     </ClInclude>
-    <ClInclude Include="JGNet98App.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Monster.h">
       <Filter>Base</Filter>
     </ClInclude>
@@ -96,6 +93,9 @@
     </ClInclude>
     <ClInclude Include="SpawnZone.h">
       <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="JGNet98App.h">
+      <Filter>Core\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -168,9 +168,6 @@
     <ClCompile Include="TCPConnector.cpp">
       <Filter>Core\Network</Filter>
     </ClCompile>
-    <ClCompile Include="JGNet98App.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Monster.cpp">
       <Filter>Base</Filter>
     </ClCompile>
@@ -185,6 +182,9 @@
     </ClCompile>
     <ClCompile Include="SpawnZone.cpp">
       <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="JGNet98App.cpp">
+      <Filter>Core\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

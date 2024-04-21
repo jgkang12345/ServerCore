@@ -17,6 +17,7 @@ public:
 
 	void Listen();
 	void Accept();
+	void ReigisterAccept(JGOverlapped* acceptOverlapped);
 	LPFN_ACCEPTEX acceptEx;
 
 	SOCKET GetListenSocket() { return _listenSocket; };

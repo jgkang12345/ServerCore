@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Connection.h"
 #include "MapManager.h"
+#include "DBConnection.h"
 Player::Player(
 	  Connection* connection
 	, const Vector3& pos
@@ -19,6 +20,28 @@ Player::Player(
 , Creature(CreatureType::PLAYER, pos, pos, State::IDLE, Dir::NONE, hp, mp, damage, speed, false, defense, hp, mp), _playerType(playerType), _exp(exp)
 {
 	SetPlayerName(playerName);
+
+	_levelHpMax[1][1] = 2000;
+	_levelHpMax[1][2] = 2100;
+	_levelHpMax[1][3] = 2200;
+	_levelHpMax[1][4] = 2300;
+	_levelHpMax[1][5] = 2400;
+	_levelHpMax[1][6] = 2500;
+	_levelHpMax[1][7] = 2600;
+	_levelHpMax[1][8] = 2700;
+	_levelHpMax[1][9] = 2800;
+	_levelHpMax[1][10] = 2900;
+
+	_levelHpMax[2][1] = 1000;
+	_levelHpMax[2][2] = 1100;
+	_levelHpMax[2][3] = 1200;
+	_levelHpMax[2][4] = 1300;
+	_levelHpMax[2][5] = 1400;
+	_levelHpMax[2][6] = 1500;
+	_levelHpMax[2][7] = 1600;
+	_levelHpMax[2][8] = 1700;
+	_levelHpMax[2][9] = 1800;
+	_levelHpMax[2][10] = 1900;
 }
 
 Player::~Player()
@@ -39,7 +62,7 @@ void Player::PlayerSync(const Vector3& pos, State state, Dir dir, Dir mousedir, 
 	_angle = angle;
 }
 
-void Player::SetPlayerName(WCHAR* playerName)
+void Player::SetPlayerName(wchar* playerName)
 {
 	int32 size = wcslen(playerName) * sizeof(WCHAR);
 	::memcpy(_playerName, playerName, size);
@@ -135,6 +158,9 @@ void Player::ReSpawn()
 
 void Player::ExpUp(float exp)
 {
+	if (_level >= 10) return;
+
+
 	{
 		LockGuard lock(&_spinLock);
 		_exp += exp;
@@ -162,15 +188,11 @@ void Player::ExpUp(float exp)
 void Player::LevelUp()
 {
 	_level++;
-	_hpMax = _hpMax + (_level * (_hpMax * 0.2));
+	int32 playerType = static_cast<int32>(_playerType);
+	_hpMax = _levelHpMax[playerType][_level];
 	_hp = _hpMax;
-	StatPointUp();
-}
-
-void Player::StatPointUp()
-{
-	LockGuard lock(&_spinLock);
 	_statPoint += 4;
+	_exp = 0;
 }
 
 void Player::StatPointDown()

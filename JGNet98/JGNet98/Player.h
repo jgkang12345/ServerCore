@@ -4,6 +4,9 @@ class Connection;
 
 class Player : public Creature
 {
+private:
+	int32				_levelHpMax[3][11];
+
 protected:
 	int32				_playerSQ;
 	Dir					_mouseDir;
@@ -43,11 +46,10 @@ public:
 	virtual void ReSpawn();
 	virtual void ExpUp(float exp);
 	virtual void LevelUp();
-	virtual void StatPointUp();
 	virtual void StatPointDown();
 	virtual void UpStat(int32 type);
 	virtual void SendStatInfo();
-
+	
 public:	
 	void		 PlayerSync
 	(

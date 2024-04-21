@@ -63,39 +63,43 @@ void TCPListener::Listen()
 
 void TCPListener::Accept()
 {
-	Connection* newConnector = _connectorFactoryFunc();
-	for (int i = 0; i < 5; i++) 
+	for (int32 i = 0; i < 5; i++) 
 	{
-		// TODO 일단은 1개만 해볼게요
-		_acceptOverlapped[i].connection = newConnector;
+		ReigisterAccept(&_acceptOverlapped[i]);
+	}
+}
 
-		DWORD byteRecvied;
-		bool result = acceptEx(_listenSocket
-			, newConnector->GetSocket()
-			, newConnector->GetRecvBuffer().GetWritePos()
-			, 0
-			, sizeof(SOCKADDR_IN) + 16
-			, sizeof(SOCKADDR_IN) + 16
-			, &byteRecvied
-			, reinterpret_cast<LPOVERLAPPED>(&_acceptOverlapped[i]));
+void TCPListener::ReigisterAccept(JGOverlapped* acceptOverlapped)
+{
+	Connection* newConnector = _connectorFactoryFunc();
+	acceptOverlapped->connection = newConnector;
 
-		if (!result)
+	DWORD byteRecvied;
+	bool result = acceptEx(_listenSocket
+		, newConnector->GetSocket()
+		, newConnector->GetRecvBuffer().GetWritePos()
+		, 0
+		, sizeof(SOCKADDR_IN) + 16
+		, sizeof(SOCKADDR_IN) + 16
+		, &byteRecvied
+		, reinterpret_cast<LPOVERLAPPED>(acceptOverlapped));
+
+	if (!result)
+	{
+		int32 errorCode = WSAGetLastError();
+		if (errorCode != ERROR_IO_PENDING)
 		{
-			int32 errorCode = WSAGetLastError();
-			if (errorCode != ERROR_IO_PENDING)
-			{
-				result = acceptEx(_listenSocket
-					, newConnector->GetSocket()
-					, newConnector->GetRecvBuffer().GetWritePos()
-					, 0
-					, sizeof(SOCKADDR_IN) + 16
-					, sizeof(SOCKADDR_IN) + 16
-					, &byteRecvied
-					, reinterpret_cast<LPOVERLAPPED>(&_acceptOverlapped[i]));
+			result = acceptEx(_listenSocket
+				, newConnector->GetSocket()
+				, newConnector->GetRecvBuffer().GetWritePos()
+				, 0
+				, sizeof(SOCKADDR_IN) + 16
+				, sizeof(SOCKADDR_IN) + 16
+				, &byteRecvied
+				, reinterpret_cast<LPOVERLAPPED>(acceptOverlapped));
 
-				if (!result)
-					DEBUG_ERROR(1 == 0, "Accept Error!!");
-			}
+			if (!result)
+				DEBUG_ERROR(1 == 0, "Accept Error!!");
 		}
 	}
 }

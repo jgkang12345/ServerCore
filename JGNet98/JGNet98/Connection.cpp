@@ -112,10 +112,18 @@ void Connection::OnRecv(Connection* connection, byte* dataPtr, int32 dataLen)
 
 void Connection::OnDisconnect()
 {
-	int64 desired = 1;
-	int64 expected = 0;
-	if (InterlockedCompareExchange64(&_deletePlayer, desired, expected) == 1)
+	if (InterlockedExchange64(&_disConnect, 1) == 1) 
+	{
 		return;
+	}
+
+
+	{
+		int64 desired = 1;
+		int64 expected = 0;
+		if (InterlockedCompareExchange64(&_deletePlayer, desired, expected) == 1)
+			return;
+	}
 
 	if (_player)
 	{
@@ -178,7 +186,11 @@ void Connection::RecvProc(bool ret, int32 numOfBytes)
 void Connection::AcceptProc(bool ret, int32 numOfBytes, JGOverlapped* overlapped)
 {
 	SOCKET listenSocket = overlapped->acceptOwner->GetListenSocket();
-	::setsockopt(_socket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, reinterpret_cast<char*>(&listenSocket), sizeof(listenSocket));
+	::setsockopt(_socket
+		, SOL_SOCKET
+		, SO_UPDATE_ACCEPT_CONTEXT
+		, reinterpret_cast<char*>(&listenSocket)
+		, sizeof(listenSocket));
 
 	::memset(&_sockAddrIn, 0, sizeof(_sockAddrIn));
 	int32 clientAddrSize = sizeof(_sockAddrIn);
@@ -188,7 +200,7 @@ void Connection::AcceptProc(bool ret, int32 numOfBytes, JGOverlapped* overlapped
 	// TODO OnConnect Ã³¸®...
 	OnConnect();
 
-	overlapped->acceptOwner->Accept();
+	overlapped->acceptOwner->ReigisterAccept(overlapped);
 }
 
 bool Connection::HeartBeatPing(int32 currentTick)
